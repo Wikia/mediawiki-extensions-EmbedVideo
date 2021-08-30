@@ -6,7 +6,7 @@
  * @license MIT
  * @package EmbedVideo
  * @link    https://www.mediawiki.org/wiki/Extension:EmbedVideo
- **/
+ */
 
 namespace EmbedVideo;
 
@@ -16,7 +16,7 @@ class VideoService {
 	 *
 	 * @var array
 	 */
-	static private $services = [
+	private static $services = [
 		'archiveorg' => [
 			'embed'			=> '<iframe title="%4$s" src="//archive.org/embed/%1$s" width="%2$d" height="%3$d" frameborder="0" allowfullscreen="true"></iframe>',
 			'default_width'	=> 640,
@@ -514,9 +514,9 @@ class VideoService {
 	 *
 	 * @var array
 	 */
-	static private $serviceHostMap = [
+	private static $serviceHostMap = [
 		'archive.org'				=> 'archiveorg',
-		'embed.bambuser.com'		=> ['bambuser', 'bambuser_channel'],
+		'embed.bambuser.com'		=> [ 'bambuser', 'bambuser_channel' ],
 		'beam.pro' 					=> 'beam',
 		'blip.tv'					=> 'blip',
 		'bing.com'					=> 'bing',
@@ -536,18 +536,18 @@ class VideoService {
 		'rutube.ru'					=> 'rutube',
 		'smashcast.tv'				=> 'smashcast',
 		'soundcloud.com'			=> 'soundcloud',
-		'spotify.com'				=> ['spotifyalbum', 'spotifyartist', 'spotifytrack'],
+		'spotify.com'				=> [ 'spotifyalbum', 'spotifyartist', 'spotifytrack' ],
 		'teachertube.com'			=> 'teachertube',
 		'ted.com'					=> 'ted',
 		'tubitv.com'				=> 'tubitv',
 		'tudou.com'					=> 'todou',
 		'tvpot.daum.net'			=> 'tvpot',
-		'twitch.tv'					=> ['twitch', 'twitchclip', 'twitchvod'],
+		'twitch.tv'					=> [ 'twitch', 'twitchclip', 'twitchvod' ],
 		'89.160.51.62'				=> 'videomaten',
 		'vimeo.com'					=> 'vimeo',
 		'vine.co'					=> 'vine',
 		'screen.yahoo.com'			=> 'yahoo',
-		'youtube.com'				=> ['youtube', 'youtubeplaylist', 'youtubevideolist'],
+		'youtube.com'				=> [ 'youtube', 'youtubeplaylist', 'youtubevideolist' ],
 		'youku.com'					=> 'youku'
 	];
 
@@ -568,14 +568,14 @@ class VideoService {
 	/**
 	 * Player Width
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	private $width = false;
 
 	/**
 	 * Player Height
 	 *
-	 * @var integer
+	 * @var int
 	 */
 	private $height = false;
 
@@ -610,11 +610,11 @@ class VideoService {
 	/**
 	 * Main Constructor
 	 *
-	 * @access private
+	 * @private
 	 * @param  string	Service Name
 	 * @return void
 	 */
-	private function __construct($service) {
+	private function __construct( $service ) {
 		$this->service = self::$services[$service];
 	}
 
@@ -623,11 +623,11 @@ class VideoService {
 	 *
 	 * @access public
 	 * @param  string	Service Name
-	 * @return mixed	New VideoService object or false on initialization error.
+	 * @return mixed New VideoService object or false on initialization error.
 	 */
-	public static function newFromName($service) {
-		if (isset(self::$services[$service])) {
-			return new self($service);
+	public static function newFromName( $service ) {
+		if ( isset( self::$services[$service] ) ) {
+			return new self( $service );
 		} else {
 			return false;
 		}
@@ -648,7 +648,7 @@ class VideoService {
 	 * @return array $services
 	 */
 	public static function getAvailableServices() {
-		return array_keys(self::$services);
+		return array_keys( self::$services );
 	}
 
 	/**
@@ -658,9 +658,9 @@ class VideoService {
 	 * @param  string	Service Name
 	 * @param  mixed   args
 	 */
-	public static function addService($service, $args) {
-		if (isset(self::$services[$service])) {
-			throw new \MWException("Service already already exists: $service");
+	public static function addService( $service, $args ) {
+		if ( isset( self::$services[$service] ) ) {
+			throw new \MWException( "Service already already exists: $service" );
 		}
 		self::$services[$service] = $args;
 	}
@@ -669,40 +669,40 @@ class VideoService {
 	 * Return built HTML.
 	 *
 	 * @access public
-	 * @return mixed	String HTML to output or false on error.
+	 * @return mixed String HTML to output or false on error.
 	 */
 	public function getHtml() {
-		if ($this->getVideoID() === false || $this->getWidth() === false || $this->getHeight() === false) {
+		if ( $this->getVideoID() === false || $this->getWidth() === false || $this->getHeight() === false ) {
 			return false;
 		}
 
 		$html = false;
-		if (isset($this->service['embed'])) {
+		if ( isset( $this->service['embed'] ) ) {
 			// Embed can be generated locally instead of calling out to the service to get it.
 			$data = [
 				$this->service['embed'],
-				htmlentities($this->getVideoID(), ENT_QUOTES),
+				htmlentities( $this->getVideoID(), ENT_QUOTES ),
 				$this->getWidth(),
 				$this->getHeight(),
 				$this->getIframeTitle(),
 			];
 
-			if ($this->getExtraIds() !== false) {
-				foreach ($this->getExtraIds() as $extraId) {
-					$data[] = htmlentities($extraId, ENT_QUOTES);
+			if ( $this->getExtraIds() !== false ) {
+				foreach ( $this->getExtraIds() as $extraId ) {
+					$data[] = htmlentities( $extraId, ENT_QUOTES );
 				}
 			}
 
 			$urlArgs = $this->getUrlArgs();
-			if ($urlArgs !== false) {
+			if ( $urlArgs !== false ) {
 				$data[] = $urlArgs;
 			}
 
-			$html = call_user_func_array('sprintf', $data);
-		} elseif (isset($this->service['oembed'])) {
+			$html = call_user_func_array( 'sprintf', $data );
+		} elseif ( isset( $this->service['oembed'] ) ) {
 			// Call out to the service to get the embed HTML.
-			if ($this->service['https_enabled']
-				&& stristr($this->getVideoID(), 'https:') !== false
+			if ( $this->service['https_enabled']
+				&& stristr( $this->getVideoID(), 'https:' ) !== false
 			) {
 				$protocol = 'https:';
 			} else {
@@ -715,8 +715,8 @@ class VideoService {
 				$this->getHeight(),
 				$protocol
 			);
-			$oEmbed = OEmbed::newFromRequest($url);
-			if ($oEmbed !== false) {
+			$oEmbed = OEmbed::newFromRequest( $url );
+			if ( $oEmbed !== false ) {
 				$html = $oEmbed->getHtml();
 			}
 		}
@@ -728,7 +728,7 @@ class VideoService {
 	 * Return Video ID
 	 *
 	 * @access public
-	 * @return mixed	Parsed Video ID or false for one that is not set.
+	 * @return mixed Parsed Video ID or false for one that is not set.
 	 */
 	public function getVideoID() {
 		return $this->id;
@@ -739,11 +739,11 @@ class VideoService {
 	 *
 	 * @access public
 	 * @param  string	Video ID/URL
-	 * @return boolean	Success
+	 * @return bool Success
 	 */
-	public function setVideoID($id) {
-		$id = $this->parseVideoID($id);
-		if ($id !== false) {
+	public function setVideoID( $id ) {
+		$id = $this->parseVideoID( $id );
+		if ( $id !== false ) {
 			$this->id = $id;
 			return true;
 		} else {
@@ -756,21 +756,21 @@ class VideoService {
 	 *
 	 * @access public
 	 * @param  string	Video ID/URL
-	 * @return mixed	Parsed Video ID or false on failure.
+	 * @return mixed Parsed Video ID or false on failure.
 	 */
-	public function parseVideoID($id) {
-		$id = trim($id);
+	public function parseVideoID( $id ) {
+		$id = trim( $id );
 		// URL regexes are put into the array first to prevent cases where the ID regexes might accidentally match an incorrect portion of the URL.
-		$regexes = array_merge((array)$this->service['url_regex'], (array)$this->service['id_regex']);
-		if (is_array($regexes) && count($regexes)) {
-			foreach ($regexes as $regex) {
-				if (preg_match($regex, $id, $matches)) {
+		$regexes = array_merge( (array)$this->service['url_regex'], (array)$this->service['id_regex'] );
+		if ( is_array( $regexes ) && count( $regexes ) ) {
+			foreach ( $regexes as $regex ) {
+				if ( preg_match( $regex, $id, $matches ) ) {
 					// Get rid of the full text match.
-					array_shift($matches);
+					array_shift( $matches );
 
-					$id = array_shift($matches);
+					$id = array_shift( $matches );
 
-					if (count($matches)) {
+					if ( count( $matches ) ) {
 						$this->extraIDs = $matches;
 					}
 
@@ -789,7 +789,7 @@ class VideoService {
 	 * Return extra IDs.
 	 *
 	 * @access public
-	 * @return array|boolean	Array of extra information or false if not set.
+	 * @return array|bool Array of extra information or false if not set.
 	 */
 	public function getExtraIDs() {
 		return $this->extraIDs;
@@ -799,7 +799,7 @@ class VideoService {
 	 * Return the width.
 	 *
 	 * @access public
-	 * @return mixed	Integer value or false for not set.
+	 * @return mixed Integer value or false for not set.
 	 */
 	public function getWidth() {
 		return $this->width;
@@ -809,11 +809,11 @@ class VideoService {
 	 * Return the iframeTitle.
 	 *
 	 * @access public
-	 * @return String, defaulting to message 'ev_default_play_desc'
+	 * @return string defaulting to message 'ev_default_play_desc'
 	 */
 	public function getIframeTitle() {
-		if ($this->iframeTitle == "") {
-			return wfMessage('ev_default_play_desc')->text();
+		if ( $this->iframeTitle == "" ) {
+			return wfMessage( 'ev_default_play_desc' )->text();
 		}
 
 		return $this->iframeTitle;
@@ -827,29 +827,29 @@ class VideoService {
 	 * @param  integer	Width
 	 * @return void
 	 */
-	public function setWidth($width = null) {
+	public function setWidth( $width = null ) {
 		global $wgEmbedVideoMinWidth, $wgEmbedVideoMaxWidth, $wgEmbedVideoDefaultWidth;
 
-		if (!is_numeric($width)) {
-			if ($width === null && $this->getDefaultWidth() !== false && $wgEmbedVideoDefaultWidth < 1) {
+		if ( !is_numeric( $width ) ) {
+			if ( $width === null && $this->getDefaultWidth() !== false && $wgEmbedVideoDefaultWidth < 1 ) {
 				$width = $this->getDefaultWidth();
 			} else {
-				$width = ($wgEmbedVideoDefaultWidth > 0 ? $wgEmbedVideoDefaultWidth : 640);
+				$width = ( $wgEmbedVideoDefaultWidth > 0 ? $wgEmbedVideoDefaultWidth : 640 );
 			}
 		} else {
-			$width = intval($width);
+			$width = intval( $width );
 		}
 
-		if ($wgEmbedVideoMaxWidth > 0 && $width > $wgEmbedVideoMaxWidth) {
+		if ( $wgEmbedVideoMaxWidth > 0 && $width > $wgEmbedVideoMaxWidth ) {
 			$width = $wgEmbedVideoMaxWidth;
 		}
 
-		if ($wgEmbedVideoMinWidth > 0 && $width < $wgEmbedVideoMinWidth) {
+		if ( $wgEmbedVideoMinWidth > 0 && $width < $wgEmbedVideoMinWidth ) {
 			$width = $wgEmbedVideoMinWidth;
 		}
 		$this->width = $width;
 
-		if ($this->getHeight() === false) {
+		if ( $this->getHeight() === false ) {
 			$this->setHeight();
 		}
 	}
@@ -858,7 +858,7 @@ class VideoService {
 	 * Return the height.
 	 *
 	 * @access public
-	 * @return mixed	Integer value or false for not set.
+	 * @return mixed Integer value or false for not set.
 	 */
 	public function getHeight() {
 		return $this->height;
@@ -871,28 +871,28 @@ class VideoService {
 	 * @param  mixed	[Optional] Height Value
 	 * @return void
 	 */
-	public function setHeight($height = null) {
-		if ($height !== null && $height > 0) {
-			$this->height = intval($height);
+	public function setHeight( $height = null ) {
+		if ( $height !== null && $height > 0 ) {
+			$this->height = intval( $height );
 			return;
 		}
 
 		$ratio = 16 / 9;
-		if ($this->getDefaultRatio() !== false) {
+		if ( $this->getDefaultRatio() !== false ) {
 			$ratio = $this->getDefaultRatio();
 		}
-		$this->height = round($this->getWidth() / $ratio);
+		$this->height = round( $this->getWidth() / $ratio );
 	}
 
 	/**
 	 * Return the optional URL arguments.
 	 *
 	 * @access public
-	 * @return mixed	Integer value or false for not set.
+	 * @return mixed Integer value or false for not set.
 	 */
 	public function getUrlArgs() {
-		if ($this->urlArgs !== false) {
-			return http_build_query($this->urlArgs);
+		if ( $this->urlArgs !== false ) {
+			return http_build_query( $this->urlArgs );
 		}
 	}
 
@@ -901,24 +901,24 @@ class VideoService {
 	 *
 	 * @access public
 	 * @param  string	Raw Arguments
-	 * @return boolean	Success
+	 * @return bool Success
 	 */
-	public function setUrlArgs($urlArgs) {
-		if (!$urlArgs) {
+	public function setUrlArgs( $urlArgs ) {
+		if ( !$urlArgs ) {
 			return true;
 		}
 
-		$urlArgs = urldecode($urlArgs);
-		$_args = explode('&', $urlArgs);
+		$urlArgs = urldecode( $urlArgs );
+		$_args = explode( '&', $urlArgs );
 		$arguments = [];
 
-		if (is_array($_args)) {
-			foreach ($_args as $rawPair) {
-				list($key, $value) = explode("=", $rawPair, 2);
-				if (empty($key) || ($value === null || $value === '')) {
+		if ( is_array( $_args ) ) {
+			foreach ( $_args as $rawPair ) {
+				list( $key, $value ) = explode( "=", $rawPair, 2 );
+				if ( empty( $key ) || ( $value === null || $value === '' ) ) {
 					return false;
 				}
-				$arguments[$key] = htmlentities($value, ENT_QUOTES);
+				$arguments[$key] = htmlentities( $value, ENT_QUOTES );
 			}
 		} else {
 			return false;
@@ -931,7 +931,7 @@ class VideoService {
 	 * Is HTTPS enabled?
 	 *
 	 * @access public
-	 * @return boolean
+	 * @return bool
 	 */
 	public function isHttpsEnabled() {
 		return (bool)$this->service['https_enabled'];
@@ -941,19 +941,19 @@ class VideoService {
 	 * Return default width if set.
 	 *
 	 * @access public
-	 * @return mixed	Integer width or false if not set.
+	 * @return mixed Integer width or false if not set.
 	 */
 	public function getDefaultWidth() {
-		return ($this->service['default_width'] > 0 ? $this->service['default_width'] : false);
+		return ( $this->service['default_width'] > 0 ? $this->service['default_width'] : false );
 	}
 
 	/**
 	 * Return default ratio if set.
 	 *
 	 * @access public
-	 * @return mixed	Integer ratio or false if not set.
+	 * @return mixed Integer ratio or false if not set.
 	 */
 	public function getDefaultRatio() {
-		return ($this->service['default_ratio'] > 0 ? $this->service['default_ratio'] : false);
+		return ( $this->service['default_ratio'] > 0 ? $this->service['default_ratio'] : false );
 	}
 }
