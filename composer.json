@@ -7,7 +7,7 @@
 		"php": ">=7.0.0"
 	},
 	"require-dev": {
-		"mediawiki/mediawiki-codesniffer": "v37.0.0"
+		"mediawiki/mediawiki-codesniffer": "v38.0.0"
 	},
 	"scripts": {
 		"test": [
